@@ -9,10 +9,10 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from Paytm import Checksum
+#from Paytm import Checksum
 
-from django.http import HttpResponse
-MERCHANT_KEY = 'Your-Merchant-Key-Here'
+#from django.http import HttpResponse
+#MERCHANT_KEY = 'Your-Merchant-Key-Here'
 
 class ProductView(View):
 	def get(self, request):
@@ -135,50 +135,50 @@ def checkout(request):
 	return render(request, 'app/checkout.html', {'add':add, 'cart_items':cart_items})
 
 
-@csrf_exempt
-def handlerequest(request):
+#@csrf_exempt
+#def handlerequest(request):
     # paytm will send you post request here
-    form = request.POST
-    response_dict = {}
-    for i in form.keys():
-        response_dict[i] = form[i]
-        if i == 'CHECKSUMHASH':
-            checksum = form[i]
+   # form = request.POST
+   # response_dict = {}
+    #for i in form.keys():
+     #   response_dict[i] = form[i]
+      #  if i == 'CHECKSUMHASH':
+       #     checksum = form[i]
 
-    verify = Checksum.verify_checksum(response_dict, MERCHANT_KEY, checksum)
-    if verify:
-        if response_dict['RESPCODE'] == '01':
-            print('order successful')
-        else:
-            print('order was not successful because' + response_dict['RESPMSG'])
-    return render(request, 'app/paymentstatus.html', {'response': response_dict})
+ #   verify = Checksum.verify_checksum(response_dict, MERCHANT_KEY, checksum)
+#    if verify:
+ #       if response_dict['RESPCODE'] == '01':
+  #          print('order successful')
+   #     else:
+    #        print('order was not successful because' + response_dict['RESPMSG'])
+    #return render(request, 'app/paymentstatus.html', {'response': response_dict})
 
-@login_required
-def payment_done(request):
-	custid = request.GET.get('custid')
-	print("Customer ID", custid)
-	user = request.user
-	cartid = Cart.objects.filter(user = user)
-	customer = Customer.objects.filter(id=custid)
-	# for cid in cartid:
-		# OrderPlaced(user=user, customer=customer, product=cid.product, quantity=cid.quantity).save()
-		# print("Order Saved")
-		# cid.delete()
-		# print("Cart Item Deleted")
-	param_dict={
+#@login_required
+#def payment_done(request):
+#	custid = request.GET.get('custid')
+#	print("Customer ID", custid)
+#	user = request.user
+#	cartid = Cart.objects.filter(user = user)
+#	customer = Customer.objects.filter(id=custid)
+#	# for cid in cartid:
+#		# OrderPlaced(user=user, customer=customer, product=cid.product, quantity=cid.quantity).save()
+#		# print("Order Saved")
+#		# cid.delete()
+#		# print("Cart Item Deleted")
+#	param_dict={
+#
+ #           'MID': '8076759876',
+  #          'ORDER_ID': 'order.order_id' ,
+   #        'TXN_AMOUNT': '1',
+    #        'CUST_ID': 'email',
+        #    'INDUSTRY_TYPE_ID': 'Retail',
+       #     'WEBSITE': 'WEBSTAGING',
+      #      'CHANNEL_ID': 'WEB',
+     #       'CALLBACK_URL':'http://127.0.0.1:8000/app/handlerequest/',
 
-            'MID': '8076759876',
-            'ORDER_ID': 'order.order_id' ,
-            'TXN_AMOUNT': '1',
-            'CUST_ID': 'email',
-            'INDUSTRY_TYPE_ID': 'Retail',
-            'WEBSITE': 'WEBSTAGING',
-            'CHANNEL_ID': 'WEB',
-            'CALLBACK_URL':'http://127.0.0.1:8000/app/handlerequest/',
-
-    }
-	param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
-	return render(request,'app/paytm.html',{param_dict})
+    #}
+	#param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
+	#return render(request,'app/paytm.html',{param_dict})
 	# return redirect("orders")
 
 def remove_cart(request):
